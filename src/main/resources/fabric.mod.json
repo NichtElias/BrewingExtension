@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "brewext",
+  "version": "${version}",
+  "name": "Brewing Extension",
+  "description": "Extending the vanilla brewing system with some new recipes.",
+  "authors": [
+    "NichtElias"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/brewext/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "party.elias.brewext.BrewingExtension"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
