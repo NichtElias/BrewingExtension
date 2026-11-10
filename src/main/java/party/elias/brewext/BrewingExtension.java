@@ -131,6 +131,8 @@ public class BrewingExtension implements ModInitializer {
 
             builder.addMix(Potions.SLOW_FALLING, Items.SHULKER_SHELL, CustomPotions.LEVITATION);
             builder.addMix(CustomPotions.LEVITATION, Items.GLOWSTONE_DUST, CustomPotions.STRONG_LEVITATION);
+
+            builder.addMix(Potions.STRONG_LEAPING, Items.EMERALD_BLOCK, Potions.LUCK);
         });
 
     }
