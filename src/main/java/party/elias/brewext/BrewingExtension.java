@@ -2,7 +2,7 @@ package party.elias.brewext;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
-import net.fabricmc.fabric.api.registry.FabricBrewingRecipeRegistryBuilder;
+import net.fabricmc.fabric.api.registry.FabricPotionBrewingBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponents;
@@ -87,7 +87,7 @@ public class BrewingExtension implements ModInitializer {
 
         UseEntityCallback.EVENT.register(BrewingExtension::feedPotion);
 
-        FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
+        FabricPotionBrewingBuilder.BUILD.register(builder -> {
             for (Consumer<PotionBrewing.Builder> callback: brewingRecipeRegistrationCallbacks) {
                 callback.accept(builder);
             }
