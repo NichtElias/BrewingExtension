@@ -2,7 +2,6 @@ package party.elias.brewext;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
-import net.fabricmc.fabric.api.registry.FabricPotionBrewingBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponents;
@@ -21,7 +20,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
-import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.component.Consumable;
@@ -29,14 +27,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.EntityHitResult;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
-
 public class BrewingExtension implements ModInitializer {
     public static final String MODID = "brewext";
-
-    private final List<Consumer<PotionBrewing.Builder>> brewingRecipeRegistrationCallbacks = new ArrayList<>();
 
     private static InteractionResult feedPotion(Player player, Level world, InteractionHand hand, Entity entity, EntityHitResult hitResult) {
         ItemStack handItem = player.getItemInHand(hand);
@@ -87,54 +79,6 @@ public class BrewingExtension implements ModInitializer {
 
         UseEntityCallback.EVENT.register(BrewingExtension::feedPotion);
 
-        FabricPotionBrewingBuilder.BUILD.register(builder -> {
-            for (Consumer<PotionBrewing.Builder> callback: brewingRecipeRegistrationCallbacks) {
-                callback.accept(builder);
-            }
-
-            builder.addMix(Potions.STRONG_SWIFTNESS, Items.GOLDEN_APPLE, CustomPotions.HORSE_ELECTROLYTES);
-            builder.addMix(CustomPotions.HORSE_ELECTROLYTES, Items.REDSTONE, CustomPotions.LONG_HORSE_ELECTROLYTES);
-
-            builder.addMix(Potions.STRONG_LEAPING, Items.SLIME_BLOCK, CustomPotions.FROG);
-            builder.addMix(CustomPotions.FROG, Items.OCHRE_FROGLIGHT, CustomPotions.HYPERFROG);
-            builder.addMix(CustomPotions.FROG, Items.PEARLESCENT_FROGLIGHT, CustomPotions.HYPERFROG);
-            builder.addMix(CustomPotions.FROG, Items.VERDANT_FROGLIGHT, CustomPotions.HYPERFROG);
-
-            builder.addStartMix(Items.GLOW_INK_SAC, CustomPotions.GLOWING);
-            builder.addMix(CustomPotions.GLOWING, Items.REDSTONE, CustomPotions.LONG_GLOWING);
-            builder.addMix(CustomPotions.GLOWING, Items.FERMENTED_SPIDER_EYE, Potions.INVISIBILITY);
-            builder.addMix(CustomPotions.LONG_GLOWING, Items.FERMENTED_SPIDER_EYE, Potions.LONG_INVISIBILITY);
-
-            builder.addMix(Potions.INVISIBILITY, Items.INK_SAC, CustomPotions.BLINDNESS);
-            builder.addMix(CustomPotions.BLINDNESS, Items.REDSTONE, CustomPotions.LONG_BLINDNESS);
-            builder.addMix(Potions.LONG_INVISIBILITY, Items.INK_SAC, CustomPotions.LONG_BLINDNESS);
-
-            builder.addMix(Potions.WATER, Items.ROTTEN_FLESH, CustomPotions.NAUSEA);
-            builder.addMix(CustomPotions.NAUSEA, Items.REDSTONE, CustomPotions.LONG_NAUSEA);
-
-            builder.addMix(Potions.SWIFTNESS, Items.GOLDEN_PICKAXE, CustomPotions.HASTE);
-            builder.addMix(CustomPotions.HASTE, Items.REDSTONE, CustomPotions.LONG_HASTE);
-            builder.addMix(CustomPotions.HASTE, Items.GLOWSTONE_DUST, CustomPotions.STRONG_HASTE);
-
-            builder.addMix(Potions.INVISIBILITY, Items.BLUE_ORCHID, CustomPotions.TRUE_INVISIBILITY);
-            builder.addMix(CustomPotions.TRUE_INVISIBILITY, Items.REDSTONE, CustomPotions.LONG_TRUE_INVISIBILITY);
-            builder.addMix(Potions.LONG_INVISIBILITY, Items.BLUE_ORCHID, CustomPotions.LONG_TRUE_INVISIBILITY);
-
-            builder.addMix(Potions.POISON, Items.WITHER_ROSE, CustomPotions.WITHER);
-            builder.addMix(CustomPotions.WITHER, Items.REDSTONE, CustomPotions.LONG_WITHER);
-            builder.addMix(Potions.LONG_POISON, Items.WITHER_ROSE, CustomPotions.LONG_WITHER);
-            builder.addMix(CustomPotions.WITHER, Items.GLOWSTONE_DUST, CustomPotions.STRONG_WITHER);
-            builder.addMix(Potions.STRONG_POISON, Items.WITHER_ROSE, CustomPotions.STRONG_WITHER);
-
-            builder.addMix(Potions.STRONG_HEALING, Items.CAKE, CustomPotions.RESTORATION);
-            builder.addMix(CustomPotions.RESTORATION, Items.HONEY_BLOCK, CustomPotions.GREATER_RESTORATION);
-
-            builder.addMix(Potions.SLOW_FALLING, Items.SHULKER_SHELL, CustomPotions.LEVITATION);
-            builder.addMix(CustomPotions.LEVITATION, Items.GLOWSTONE_DUST, CustomPotions.STRONG_LEVITATION);
-
-            builder.addMix(Potions.STRONG_LEAPING, Items.EMERALD_BLOCK, Potions.LUCK);
-        });
-
     }
 
     private void registerPotions() {
@@ -161,22 +105,14 @@ public class BrewingExtension implements ModInitializer {
     }
 
     private void registerExtraLongPotion(Holder<Potion> potionHolder) {
-        Holder<Potion> xlPotionHolder = Registry.registerForHolder(
+        Registry.registerForHolder(
                 BuiltInRegistries.POTION,
-                Identifier.fromNamespaceAndPath(MODID, "extra_long_" + potionHolder.unwrapKey().get().identifier().getPath()),
+                Identifier.fromNamespaceAndPath(MODID, "extra_" + potionHolder.unwrapKey().get().identifier().getPath()),
                 new Potion(
                         potionHolder.value().name(),
                         potionHolder.value().getEffects().stream().map(
                                 effect -> effect.withScaledDuration(2)
                                 ).toArray(MobEffectInstance[]::new)
-                )
-        );
-
-        brewingRecipeRegistrationCallbacks.add(builder ->
-                builder.addMix(
-                        potionHolder,
-                        Items.PITCHER_PLANT,
-                        xlPotionHolder
                 )
         );
     }

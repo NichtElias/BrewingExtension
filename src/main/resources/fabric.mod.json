@@ -14,11 +14,14 @@
   "entrypoints": {
     "main": [
       "party.elias.brewext.BrewingExtension"
+    ],
+    "fabric-datagen": [
+      "party.elias.brewext.datagen.BrewingExtensionDataGenerator"
     ]
   },
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric-api": "*",
-    "minecraft": ">=26.1 <=26.2"
+    "minecraft": "~26.3"
   }
 }
